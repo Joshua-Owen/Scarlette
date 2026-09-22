@@ -1,0 +1,268 @@
+
+using UnityEditor.ShaderGraph;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+public class PlayerMovement : MonoBehaviour
+{    
+    RaycastHit hit;
+
+    CharacterController cc;
+    PlayerInputs input;
+    Transform cameraTransform;
+    TargetFinder targetFinder;
+    
+    [Header("Movement")]
+    
+    public Vector3 velocity;
+
+    
+    public Vector3 DesiredDirection;
+    [SerializeField] float groundGravity = -2f;
+
+   
+    Vector3 InputCameraDirection;
+    public Vector3 inputDirection;
+    [SerializeField] float maxSpeed = 5f;
+    [SerializeField] float rotationSpeed = 540f;
+    [SerializeField] float airRotationSpeed = 54f;
+    [SerializeField] float rotationAcceleration = 1000f;
+    float currentRotationSpeed;
+    [SerializeField] float acceleration = 10f;
+
+    [SerializeField] float deceleration = 20f;
+
+    public float currentSpeed;
+    [Header("Jump")]
+    [SerializeField] float jumpHeight = 2f;
+    const float GRAVITY = -9.81f * 2;
+    bool isGrounded;
+    /*[Header("GroundCheck")]
+    RaycastHit hit;
+    [SerializeField]float distanceToGround = 1;
+    [SerializeField] float groundCheckRadius = 0.2f;
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] float groundGravity = -2f;
+    [SerializeField] float maxSlopeAngle =  45f;*/
+    [Header("Airbourne")]
+    [SerializeField] float aircontrol = 0.5f;
+    [Header("Slope")]
+    [SerializeField] float slideSpeed = 5f;
+
+    bool isOnSteepSlope;
+
+    void Start()
+    {
+
+        cameraTransform = Camera.main.transform;
+        cc = GetComponent<CharacterController>();
+        input = GetComponent<PlayerInputs>();
+        targetFinder = cameraTransform.GetComponent<TargetFinder>();
+    }
+
+   void Update()
+    { 
+        /*
+        HandleGroundCheck();
+        HandleMovement();
+        HandleGravity();
+        HandleJump();
+        */
+        
+       
+    }
+    
+
+    
+
+#region movement    
+    public void HandleMovementSetUp()
+    {
+        SetUpMovementInputs();
+
+        if (InputCameraDirection.sqrMagnitude > 0.0001f) 
+        {
+            DesiredDirection = InputCameraDirection;
+            DesiredDirection.y  = 0;
+        }
+        /*
+        if(isGrounded)
+            HandleGroundedMovement();
+        
+        else if (isOnSteepSlope)
+        {
+            HandleSlopeSlide();
+        }
+        else
+        {
+            HandleAirbourneMovement();
+        }*/
+    
+        Vector3 facingDirection = DesiredDirection;
+        facingDirection.y = 0;
+
+        if(targetFinder.currentTarget)
+        {
+            facingDirection =  targetFinder.currentTarget.position - transform.position;
+            facingDirection.y = 0;
+            HandleRotation(facingDirection);
+        }
+        if (InputCameraDirection.sqrMagnitude >= 0.0001f)
+        {
+            HandleRotation(facingDirection);
+        }
+    }
+
+    void SetUpMovementInputs()
+    {
+        inputDirection = new Vector3(input.MoveInput.x, 0, input.MoveInput.y);
+        
+        if (inputDirection.sqrMagnitude > 1f) inputDirection.Normalize();
+
+        CameraMovementSetUp(inputDirection);      
+    }
+
+    private void CameraMovementSetUp(Vector3 inputDirection)
+    {
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+         
+        if (cameraForward.sqrMagnitude < 0.0001f)
+        {
+            cameraForward = transform.forward;
+            cameraForward.y = 0;
+        }
+
+        if (cameraRight.sqrMagnitude < 0.0001f)
+        {
+            cameraRight = transform.right;
+            cameraRight.y = 0;
+        }
+
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        InputCameraDirection = cameraRight * inputDirection.x + cameraForward * inputDirection.z;
+        InputCameraDirection.y = 0;
+    }  
+
+    private void HandleRotation(Vector3 facingDirection)
+    {
+        var targetRotation = Quaternion.LookRotation(facingDirection);
+        float targetRotationSpeed;
+
+        if (isGrounded)
+        {
+            currentRotationSpeed = Mathf.MoveTowards(currentRotationSpeed, rotationSpeed, rotationAcceleration * Time.deltaTime);
+        }
+        else
+        {
+            currentRotationSpeed = airRotationSpeed;
+        }
+        
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, currentRotationSpeed * Time.deltaTime);
+     
+         
+    }
+    void HandleLockOnRotation()
+    {
+        if (!targetFinder.currentTarget)    return;
+
+        var playerFaceTarget = cameraTransform.rotation;
+        playerFaceTarget.x = 0;
+        playerFaceTarget.z = 0;
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, playerFaceTarget, rotationAcceleration * Time.deltaTime);
+           
+    }
+
+    public void HandleIdleMovement()
+    {
+        var idleVelocity = new Vector3(0, velocity.y, 0);
+        velocity = Vector3.MoveTowards(velocity, idleVelocity, deceleration * Time.deltaTime);
+    }
+    public void HandleGroundedMovement()
+    {
+
+        DesiredDirection = Vector3.ProjectOnPlane(DesiredDirection, hit.normal).normalized;
+        
+
+        HandleSpeed();
+
+        Vector3 movement = DesiredDirection * currentSpeed;
+
+        velocity.x = movement.x;
+        velocity.z = movement.z;
+    }
+    private void HandleSpeed()
+    {
+        float targetSpeed = InputCameraDirection.sqrMagnitude >= 0.01f ? maxSpeed : 0f;
+
+        currentSpeed = targetSpeed > currentSpeed ?
+                Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.deltaTime)
+                : Mathf.MoveTowards(currentSpeed, targetSpeed, deceleration * Time.deltaTime);
+        if(!isGrounded){currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * aircontrol * Time.deltaTime);}
+    
+    }
+
+    public void HandleAirbourneMovement()
+    {
+        var currentAirVelocity = velocity;
+        currentAirVelocity.y = 0;
+
+        HandleSpeed();
+
+        var targetAirVelocity = DesiredDirection * currentSpeed;
+
+        var newAirVelocity = Vector3.MoveTowards(currentAirVelocity,targetAirVelocity,aircontrol * Time.deltaTime);
+        
+        velocity.x= newAirVelocity.x;
+        velocity.z = newAirVelocity.z;
+    }
+
+#endregion
+
+    public void HandleGroundGravity()
+    {
+        velocity.y = groundGravity;
+    }
+    public void HandleAirGravity()
+    {
+        float maxGravity = GRAVITY * 6f;
+
+        velocity.y += GRAVITY * Time.deltaTime;
+        velocity.y = Mathf.Clamp(velocity.y, maxGravity, velocity.y);
+        
+    }
+    void HandleSlopeSlide()
+    {
+        var slideDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal).normalized;
+        Debug.DrawRay(transform.position, slideDirection * 3f, Color.red);
+
+        Vector3 slopeInput = Vector3.ProjectOnPlane(DesiredDirection, hit.normal);
+
+        float slideDot = Vector3.Dot(slopeInput, slideDirection);
+
+        if (slideDot < 0f)
+        {
+            slopeInput -= slideDirection * slideDot;
+        }
+
+        Vector3 slideMovement = slideDirection * slideSpeed;
+       
+        Vector3 finalSlopeMovment = slopeInput + slideMovement;
+      
+        velocity.x = finalSlopeMovment.x;
+        velocity.z = finalSlopeMovment.z;
+    }
+    public void HandleJump()
+    {
+        // if(input.JumpPressed && isGrounded)
+        // {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * GRAVITY);
+        //}
+    }
+
+
+
+
+}
