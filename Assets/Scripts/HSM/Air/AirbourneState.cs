@@ -14,6 +14,8 @@ public class AirbourneState : PlayerState
 
     public override void Update()
     {
+        player.Movement.HandleMovementSetUp();
+
         player.Movement.HandleAirGravity();
         player.Movement.HandleAirbourneMovement();
         

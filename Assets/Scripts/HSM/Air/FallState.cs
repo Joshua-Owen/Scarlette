@@ -10,8 +10,7 @@ public class FallState : AirbourneState
     public override void  Update()
     {
         base.Update();
-        player.Movement.HandleMovementSetUp();
-        player.Movement.HandleAirbourneMovement();
+        
         if (player.Grounded.IsGrounded)
         {
             stateMachine.ChangeState(stateMachine.idleState);

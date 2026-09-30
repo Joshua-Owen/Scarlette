@@ -15,6 +15,7 @@ public class JumpState : AirbourneState
     {
 
         base.Update();
+        
         if(player.isGrounded && player.Movement.velocity.y < 0)
         {
             stateMachine.ChangeState(stateMachine.idleState);

@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 public class PlayerMovement : MonoBehaviour
 {    
     RaycastHit hit;
-
+    [SerializeField] PlayerGrounded playerGrounded;
     CharacterController cc;
     PlayerInputs input;
     Transform cameraTransform;
@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float rotationSpeed = 540f;
     [SerializeField] float airRotationSpeed = 54f;
     [SerializeField] float rotationAcceleration = 1000f;
-    float currentRotationSpeed;
+    public float currentRotationSpeed;
     [SerializeField] float acceleration = 10f;
 
     [SerializeField] float deceleration = 20f;
@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2f;
     const float GRAVITY = -9.81f * 2;
-    bool isGrounded;
+    //bool isGrounded;
     /*[Header("GroundCheck")]
     RaycastHit hit;
     [SerializeField]float distanceToGround = 1;
@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     {
         SetUpMovementInputs();
 
-        if (InputCameraDirection.sqrMagnitude > 0.0001f) 
+        if (InputCameraDirection.sqrMagnitude > 0.1f) 
         {
             DesiredDirection = InputCameraDirection;
             DesiredDirection.y  = 0;
@@ -151,9 +151,9 @@ public class PlayerMovement : MonoBehaviour
         var targetRotation = Quaternion.LookRotation(facingDirection);
         float targetRotationSpeed;
 
-        if (isGrounded)
+        if (playerGrounded.IsGrounded)
         {
-            currentRotationSpeed = Mathf.MoveTowards(currentRotationSpeed, rotationSpeed, rotationAcceleration * Time.deltaTime);
+            currentRotationSpeed = rotationSpeed; 
         }
         else
         {
@@ -195,12 +195,13 @@ public class PlayerMovement : MonoBehaviour
     }
     private void HandleSpeed()
     {
-        float targetSpeed = InputCameraDirection.sqrMagnitude >= 0.01f ? maxSpeed : 0f;
+        float targetSpeed = InputCameraDirection.sqrMagnitude >= 0.1f ? maxSpeed : 0f;
+        Debug.Log($"targetsSpeed: {targetSpeed}");
 
         currentSpeed = targetSpeed > currentSpeed ?
                 Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.deltaTime)
                 : Mathf.MoveTowards(currentSpeed, targetSpeed, deceleration * Time.deltaTime);
-        if(!isGrounded){currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * aircontrol * Time.deltaTime);}
+        if(!playerGrounded.IsGrounded){currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * aircontrol * Time.deltaTime);}
     
     }
 

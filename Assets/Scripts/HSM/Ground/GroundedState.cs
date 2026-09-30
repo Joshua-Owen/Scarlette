@@ -16,6 +16,7 @@ public class GroundedState : PlayerState
     public override void Update()
     {
         base.Update();
+        
         if(player.Inputs.JumpPressed)
         {
             stateMachine.ChangeState(stateMachine.jumpState);
