@@ -17,21 +17,9 @@ public class GroundedState : PlayerState
     {
         base.Update();
         
-        if(player.Inputs.JumpPressed)
-        {
-            stateMachine.ChangeState(stateMachine.jumpState);
-            return;
-        }
-        if (!player.Grounded.IsGrounded)
-        {
-           stateMachine.ChangeState(stateMachine.fallState);
-           return;
-        }
-        if(player.Movement.currentSpeed == 0)
-        {
-            stateMachine.ChangeState(stateMachine.idleState);
-           return;
-        }
+        
+        
+        
         player.Movement.HandleGroundGravity();
         
     }

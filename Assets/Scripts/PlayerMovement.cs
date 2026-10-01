@@ -1,11 +1,11 @@
 
+using Unity.Mathematics;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
 {    
-    RaycastHit hit;
     [SerializeField] PlayerGrounded playerGrounded;
     CharacterController cc;
     PlayerInputs input;
@@ -101,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 facingDirection = DesiredDirection;
         facingDirection.y = 0;
 
-        if(targetFinder.currentTarget)
+        /*if(targetFinder.currentTarget)
         {
             facingDirection =  targetFinder.currentTarget.position - transform.position;
             facingDirection.y = 0;
@@ -111,6 +111,7 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleRotation(facingDirection);
         }
+        */
     }
 
     void SetUpMovementInputs()
@@ -146,8 +147,16 @@ public class PlayerMovement : MonoBehaviour
         InputCameraDirection.y = 0;
     }  
 
-    private void HandleRotation(Vector3 facingDirection)
+    public void HandleRotation()
     {
+        var facingDirection = DesiredDirection;
+        facingDirection.y = 0;
+
+         if(targetFinder.currentTarget)
+        {
+            facingDirection =  targetFinder.currentTarget.position - transform.position;
+            facingDirection.y = 0;
+        }
         var targetRotation = Quaternion.LookRotation(facingDirection);
         float targetRotationSpeed;
 
@@ -183,7 +192,7 @@ public class PlayerMovement : MonoBehaviour
     public void HandleGroundedMovement()
     {
 
-        DesiredDirection = Vector3.ProjectOnPlane(DesiredDirection, hit.normal).normalized;
+        DesiredDirection = Vector3.ProjectOnPlane(DesiredDirection, playerGrounded.groundHit.normal).normalized;
         
 
         HandleSpeed();
@@ -196,7 +205,6 @@ public class PlayerMovement : MonoBehaviour
     private void HandleSpeed()
     {
         float targetSpeed = InputCameraDirection.sqrMagnitude >= 0.1f ? maxSpeed : 0f;
-        Debug.Log($"targetsSpeed: {targetSpeed}");
 
         currentSpeed = targetSpeed > currentSpeed ?
                 Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.deltaTime)
@@ -234,15 +242,16 @@ public class PlayerMovement : MonoBehaviour
         velocity.y = Mathf.Clamp(velocity.y, maxGravity, velocity.y);
         
     }
-    void HandleSlopeSlide()
+    public void HandleSlopeSlide()
     {
-        var slideDirection = Vector3.ProjectOnPlane(Vector3.down, hit.normal).normalized;
-        Debug.DrawRay(transform.position, slideDirection * 3f, Color.red);
+        var slideDirection = Vector3.ProjectOnPlane(Vector3.down, playerGrounded.groundHit.normal).normalized;
+       
+       Debug.DrawRay(transform.position, slideDirection * 3f, Color.red);
 
-        Vector3 slopeInput = Vector3.ProjectOnPlane(DesiredDirection, hit.normal);
+        Vector3 slopeInput = Vector3.ProjectOnPlane(DesiredDirection, playerGrounded.groundHit.normal);
 
         float slideDot = Vector3.Dot(slopeInput, slideDirection);
-
+       
         if (slideDot < 0f)
         {
             slopeInput -= slideDirection * slideDot;
@@ -252,8 +261,9 @@ public class PlayerMovement : MonoBehaviour
        
         Vector3 finalSlopeMovment = slopeInput + slideMovement;
       
-        velocity.x = finalSlopeMovment.x;
-        velocity.z = finalSlopeMovment.z;
+        //velocity.x = finalSlopeMovment.x;
+        //velocity.z = finalSlopeMovment.z;
+        velocity = finalSlopeMovment;
     }
     public void HandleJump()
     {

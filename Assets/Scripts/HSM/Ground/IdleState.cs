@@ -22,6 +22,21 @@ public class IdleState : GroundedState
             stateMachine.ChangeState(stateMachine.moveState);
             return;
         }
+        if(player.Inputs.JumpPressed)
+        {
+            stateMachine.ChangeState(stateMachine.jumpState);
+            return;
+        }
+        if (!player.Grounded.IsGrounded)
+        {
+           stateMachine.ChangeState(stateMachine.fallState);
+           return;
+        }
+        if (player.isOnSlope)
+        {
+            stateMachine.ChangeState(stateMachine.slopeState);
+            return;
+        }
     }
 
     public override void Exit()

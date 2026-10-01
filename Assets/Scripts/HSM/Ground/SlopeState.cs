@@ -6,5 +6,15 @@ public class SlopeState : GroundedState
     {
     }
 
-    
+    public override void Update()
+    {
+        base.Update();
+        player.Movement.HandleMovementSetUp();
+        player.Movement.HandleSlopeSlide();
+        if (!player.isOnSlope)
+        {
+            stateMachine.ChangeState(stateMachine.idleState);
+            return;
+        }
+    }
 }

@@ -11,6 +11,7 @@ public class PlayerStateMachine : MonoBehaviour
     public AirbourneState airbourneState;
     public FallState fallState;
     public JumpState jumpState;
+    public SlopeState slopeState;
     private void Awake()
     {
         player =  GetComponent<PlayerController>();
@@ -21,6 +22,7 @@ public class PlayerStateMachine : MonoBehaviour
         airbourneState =  new AirbourneState(this, player);
         fallState = new FallState(this, player);
         jumpState = new JumpState(this, player);
+        slopeState = new SlopeState(this, player);
     }
 
     private void Start()

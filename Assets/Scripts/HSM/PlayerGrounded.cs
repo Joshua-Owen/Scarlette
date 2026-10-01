@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerGrounded :MonoBehaviour
 {
     public bool IsGrounded {get; private set;}
-    RaycastHit hit;
+    public RaycastHit groundHit;
     [SerializeField] float distanceToGround = 1;
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] LayerMask groundLayer;
@@ -14,20 +14,20 @@ public class PlayerGrounded :MonoBehaviour
     public void HandleGroundCheck()
     { 
         
-        var groundCastHit = Physics.SphereCast(transform.position, groundCheckRadius, Vector3.down, out hit, distanceToGround, groundLayer);
+        var groundCastHit = Physics.SphereCast(transform.position, groundCheckRadius, Vector3.down, out groundHit, distanceToGround, groundLayer);
         var minGroundNormalY = Mathf.Cos(maxSlopeAngle * Mathf.Deg2Rad); 
 
 
         if(groundCastHit)
         {
-            if(hit.normal.y >= minGroundNormalY)
+            if(groundHit.normal.y >= minGroundNormalY)
             {
                 IsGrounded = true;
                 IsOnSteepSlope = false;
             }
             else
             {
-                IsGrounded = false;
+                IsGrounded = true;
                 IsOnSteepSlope = true;
             }
         }
