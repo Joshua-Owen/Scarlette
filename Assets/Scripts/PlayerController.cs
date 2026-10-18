@@ -37,6 +37,18 @@ public class PlayerController : MonoBehaviour
         Movement.HandleGroundedMovement();
     }
 
+    public void Dodge()
+    {
+         if(Inputs.DodgePressed && !Movement.isDodging)
+        {
+            Movement.StartDodge();
+        }
+        if (Movement.isDodging)
+        {
+            Movement.HandleDodge();
+        }
+    }
+
     public void Gravity()
     {
        // playerMovement.HandleGravity();

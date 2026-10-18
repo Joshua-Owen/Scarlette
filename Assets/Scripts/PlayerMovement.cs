@@ -48,9 +48,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float aircontrol = 0.5f;
     [Header("Slope")]
     [SerializeField] float slideSpeed = 5f;
-
     bool isOnSteepSlope;
 
+    [Header("Dodge")]
+    [SerializeField] float dodgeSpeed = 10;
+    [SerializeField] float backStepSpeed = 3;
+    [SerializeField] float dodgeDuration = 0.5f;
+    public bool isDodging;
+    float dodgeTimer;
+    Vector3 dodgeDirection;
     void Start()
     {
 
@@ -273,7 +279,45 @@ public class PlayerMovement : MonoBehaviour
         //}
     }
 
+    public void HandleDodge()
+    {
+        Vector2 moveInput = input.MoveInput;
+        dodgeTimer += Time.deltaTime;
+        dodgeDirection.y = -99f;
+        //cc.Move(dodgeDirection * dodgeSpeed * Time.deltaTime);
 
+        
+        velocity.x = dodgeDirection.x * dodgeSpeed;
+        velocity.z = dodgeDirection.z * dodgeSpeed;
+
+        if(dodgeTimer >= dodgeDuration)
+        {
+            playerGrounded.distanceToGround -= 0.5f; 
+            isDodging = false;
+            dodgeDirection.y = groundGravity;
+            velocity = Vector3.zero;
+        }
+    }
+
+    public void StartDodge()
+    {
+        isDodging = true;
+        dodgeTimer = 0f;
+        var backStep = -transform.forward;
+
+        playerGrounded.distanceToGround += 0.5f; 
+
+        Vector2 moveInput = input.MoveInput;
+
+        if (moveInput.sqrMagnitude > 0.1f)
+        {
+            dodgeDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
+        }
+        else
+        {
+            dodgeDirection = backStep;
+        }
+    }
 
 
 }

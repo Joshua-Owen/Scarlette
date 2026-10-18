@@ -4,7 +4,7 @@ public class PlayerGrounded :MonoBehaviour
 {
     public bool IsGrounded {get; private set;}
     public RaycastHit groundHit;
-    [SerializeField] float distanceToGround = 1;
+    public float distanceToGround = 1;
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float maxSlopeAngle =  45f;

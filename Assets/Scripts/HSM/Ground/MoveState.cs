@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class MoveState : GroundedState
@@ -37,6 +38,8 @@ public class MoveState : GroundedState
             stateMachine.ChangeState(stateMachine.slopeState);
             return;
         }
+
+       player.Dodge();
     }
 
 

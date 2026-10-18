@@ -37,6 +37,8 @@ public class IdleState : GroundedState
             stateMachine.ChangeState(stateMachine.slopeState);
             return;
         }
+
+        player.Dodge();
     }
 
     public override void Exit()
