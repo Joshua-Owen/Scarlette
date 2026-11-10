@@ -9,6 +9,7 @@ public class JumpState : AirbourneState
     public override void Enter()
     {
         base.Enter();
+        player.Anim.animator.CrossFade("Jump", 0f);
         player.Movement.HandleJump();
     }
     public override void Update()
@@ -19,6 +20,11 @@ public class JumpState : AirbourneState
         if(player.isGrounded && player.Movement.velocity.y < 0)
         {
             stateMachine.ChangeState(stateMachine.idleState);
+            
+        }
+        if(player.isGrounded && player.Movement.velocity.y < 0 && player.TargetFndr.isLockedOn)
+        {
+            stateMachine.ChangeState(stateMachine.attackState);
             
         }
     }

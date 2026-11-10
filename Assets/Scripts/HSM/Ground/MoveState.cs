@@ -10,6 +10,8 @@ public class MoveState : GroundedState
     {
         base.Enter();
         //Debug.Log("Entered Moving");
+        player.Anim.animator.CrossFade("Grounded Movement",0.1f);
+
     }
 
     public override void Update()
@@ -38,8 +40,16 @@ public class MoveState : GroundedState
             stateMachine.ChangeState(stateMachine.slopeState);
             return;
         }
-
-       player.Dodge();
+        if(player.TargetFndr.isLockedOn)
+        {
+            stateMachine.ChangeState(stateMachine.attackState);
+            return;
+        }
+        if (player.Inputs.DodgePressed)
+        {
+            stateMachine.ChangeState(stateMachine.dodgeState);
+            
+        }
     }
 
 

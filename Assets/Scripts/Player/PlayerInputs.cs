@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputs : MonoBehaviour
 {
-    InputAction moveAction, JumpAction, lookAction, lockOnAction, switchTargetLeftAction, switchTargetRightAction, dodgeAction;
+    InputAction moveAction, JumpAction, lookAction, lockOnAction, switchTargetLeftAction, switchTargetRightAction, dodgeAction, hackAction;
     
     public Vector2 MoveInput {get; private set;}
     public Vector2 LookInput {get; private set;}
@@ -12,6 +12,7 @@ public class PlayerInputs : MonoBehaviour
     public bool SwitchTargetInputLeft {get; private set;}
     public bool SwitchTargetInputRight {get; private set;}
     public bool DodgePressed {get; private set;}
+    public bool HackPressed {get; private set;}
     void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
@@ -21,6 +22,7 @@ public class PlayerInputs : MonoBehaviour
         switchTargetLeftAction = InputSystem.actions.FindAction("SwitchTargetLeft");
         switchTargetRightAction = InputSystem.actions.FindAction("SwitchTargetRight");
         dodgeAction = InputSystem.actions.FindAction("Dodge");
+        hackAction = InputSystem.actions.FindAction("Hack");
 
         moveAction?.Enable();
         JumpAction?.Enable();
@@ -29,6 +31,7 @@ public class PlayerInputs : MonoBehaviour
         switchTargetLeftAction?.Enable();
         switchTargetRightAction?.Enable();
         dodgeAction?.Enable();
+        hackAction?.Enable();
     }
 
     void Update()
@@ -40,6 +43,7 @@ public class PlayerInputs : MonoBehaviour
         ReadSwitchTargetInputLeft();
         ReadSwitchTargetInputRight();
         ReadDodgeInput();
+        ReadHackInput();
     }
 
     void ReadMovementInput() => MoveInput = moveAction.ReadValue<Vector2>();
@@ -53,5 +57,7 @@ public class PlayerInputs : MonoBehaviour
     void ReadSwitchTargetInputLeft() => SwitchTargetInputLeft = switchTargetLeftAction.WasPerformedThisFrame();
     void ReadSwitchTargetInputRight() => SwitchTargetInputRight = switchTargetRightAction.WasPressedThisFrame();
     void ReadDodgeInput() => DodgePressed = dodgeAction.WasPressedThisFrame();
+
+    void ReadHackInput() => HackPressed = hackAction.WasPressedThisFrame();
 
 }

@@ -10,11 +10,19 @@ public class PlayerController : MonoBehaviour
     public PlayerMovement Movement => playerMovement;
     [SerializeField] PlayerGrounded playerGrounded;
     public PlayerGrounded Grounded => playerGrounded;    
-    
+    [SerializeField] PlayerStateMachine playerStateMachine;
+    public PlayerStateMachine PlayerSM => playerStateMachine;
+    [SerializeField] PlayerHack playerHack;
+    public PlayerHack Hack => playerHack;
+    [SerializeField] TargetFinder targetFinder;
+    public TargetFinder TargetFndr => targetFinder;
+    [SerializeField] PlayerAnim playerAnim;
+    public PlayerAnim Anim => playerAnim;
     public bool isGrounded;
     public bool isMoving;
     public bool isNotMoving;
     public bool isOnSlope;
+    public bool isJumping;
     public Vector3 idleVelocity;
     void Start()
     {
@@ -28,6 +36,7 @@ public class PlayerController : MonoBehaviour
         isNotMoving = Movement.currentSpeed < 0.1f;
         isOnSlope = Grounded.IsOnSteepSlope;
         isGrounded = Grounded.IsGrounded;
+        isJumping = PlayerSM.currentState == PlayerSM.jumpState ? true : false;   
         cc.Move(Movement.velocity * Time.deltaTime);
     }
 
@@ -39,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
     public void Dodge()
     {
-         if(Inputs.DodgePressed && !Movement.isDodging)
+        if(!Movement.isDodging)
         {
             Movement.StartDodge();
         }

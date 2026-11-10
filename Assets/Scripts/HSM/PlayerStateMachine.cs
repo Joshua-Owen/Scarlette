@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerStateMachine : MonoBehaviour
 {
-    private PlayerState currentState;
+    public PlayerState currentState;
     private PlayerController player;
 
     public IdleState idleState;
@@ -12,6 +12,9 @@ public class PlayerStateMachine : MonoBehaviour
     public FallState fallState;
     public JumpState jumpState;
     public SlopeState slopeState;
+    public AttackState attackState;
+    public DodgeState dodgeState;
+    public HackState hackState;
     private void Awake()
     {
         player =  GetComponent<PlayerController>();
@@ -23,6 +26,9 @@ public class PlayerStateMachine : MonoBehaviour
         fallState = new FallState(this, player);
         jumpState = new JumpState(this, player);
         slopeState = new SlopeState(this, player);
+        attackState = new AttackState(this, player);
+        dodgeState = new DodgeState(this, player);
+        hackState = new HackState(this, player);
     }
 
     private void Start()
@@ -45,3 +51,4 @@ public class PlayerStateMachine : MonoBehaviour
         Debug.Log($"Current State : {currentState}");
     }
 }
+

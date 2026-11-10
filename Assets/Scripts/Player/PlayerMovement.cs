@@ -194,6 +194,7 @@ public class PlayerMovement : MonoBehaviour
     {
         var idleVelocity = new Vector3(0, velocity.y, 0);
         velocity = Vector3.MoveTowards(velocity, idleVelocity, deceleration * Time.deltaTime);
+        currentSpeed = 0;
     }
     public void HandleGroundedMovement()
     {
