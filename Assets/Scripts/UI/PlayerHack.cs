@@ -27,6 +27,13 @@ public class PlayerHack : MonoBehaviour
     public bool isShowingResult;
     void Update()
     {
+        
+        
+    }   
+
+
+    public void HandleHackValidation()
+    {
         if(isShowingResult) return;
         string direction = HackInputHandler();
         if(direction != null)
@@ -67,11 +74,7 @@ public class PlayerHack : MonoBehaviour
             }
             
         }
-        
-    }   
-
-
-
+    }
     /*
     public void UpdateSequenceUI()
     {

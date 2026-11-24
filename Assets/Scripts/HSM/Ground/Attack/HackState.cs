@@ -23,7 +23,7 @@ public class HackState : GroundedState
         //player.HackController.UpdateInputTimer();
         player.Move();
         player.Movement.HandleRotation();
-        
+        player.Hack.HandleHackValidation();
         //player.Hack.HackToggle();
         if (!player.Hack.isShowingResult)
         {
