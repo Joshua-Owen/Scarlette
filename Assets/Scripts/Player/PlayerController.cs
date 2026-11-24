@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     public PlayerStateMachine PlayerSM => playerStateMachine;
     [SerializeField] PlayerHack playerHack;
     public PlayerHack Hack => playerHack;
+    [SerializeField] PlayerHackController playerHackController;
+    public PlayerHackController HackController => playerHackController;
     [SerializeField] TargetFinder targetFinder;
     public TargetFinder TargetFndr => targetFinder;
     [SerializeField] PlayerAnim playerAnim;

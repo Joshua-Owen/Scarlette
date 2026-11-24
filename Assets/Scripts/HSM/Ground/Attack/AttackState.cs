@@ -17,12 +17,8 @@ public class AttackState : GroundedState
         base.Update();
         player.Move();
         player.Movement.HandleRotation();
-        player.Hack.HackToggle();
-        if(player.Hack.isHacking)
-        {
-            stateMachine.ChangeState(stateMachine.hackState);
-            return;
-        }
+       
+        
 
         if(!player.TargetFndr.isLockedOn && player.Movement.currentSpeed == 0)
         {
@@ -45,5 +41,10 @@ public class AttackState : GroundedState
             return;
         }
         
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
     }
 }

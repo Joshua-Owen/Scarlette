@@ -38,15 +38,20 @@ public class IdleState : GroundedState
             stateMachine.ChangeState(stateMachine.slopeState);
             return;
         }
-        if(player.TargetFndr.isLockedOn)
+        /*if(player.TargetFndr.isLockedOn)
         {
             stateMachine.ChangeState(stateMachine.attackState);
             return;
-        }
+        }*/
         if (player.Inputs.DodgePressed)
         {
             stateMachine.ChangeState(stateMachine.dodgeState);
             
+        }
+        if(player.Inputs.HackPressed && player.TargetFndr.isLockedOn)
+        {
+            stateMachine.ChangeState(stateMachine.hackState);
+            return;
         }
     }
 

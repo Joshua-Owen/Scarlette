@@ -1,9 +1,10 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerInputs : MonoBehaviour
 {
-    InputAction moveAction, JumpAction, lookAction, lockOnAction, switchTargetLeftAction, switchTargetRightAction, dodgeAction, hackAction;
+    InputAction moveAction, JumpAction, lookAction, lockOnAction, switchTargetLeftAction, switchTargetRightAction, dodgeAction, hackAction, hackInputAction, HackConfirmAction, attackAction;
     
     public Vector2 MoveInput {get; private set;}
     public Vector2 LookInput {get; private set;}
@@ -13,6 +14,10 @@ public class PlayerInputs : MonoBehaviour
     public bool SwitchTargetInputRight {get; private set;}
     public bool DodgePressed {get; private set;}
     public bool HackPressed {get; private set;}
+    public bool HackReleased {get; private set;}
+    public bool HackConfirm {get; private set;}
+    public Vector2 HackInput { get; private set;}
+    public bool attackInput { get; private set;}
     void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
@@ -23,6 +28,9 @@ public class PlayerInputs : MonoBehaviour
         switchTargetRightAction = InputSystem.actions.FindAction("SwitchTargetRight");
         dodgeAction = InputSystem.actions.FindAction("Dodge");
         hackAction = InputSystem.actions.FindAction("Hack");
+        hackInputAction = InputSystem.actions.FindAction("HackInput");
+        attackAction = InputSystem.actions.FindAction("Attack");
+        HackConfirmAction = InputSystem.actions.FindAction("Attack");
 
         moveAction?.Enable();
         JumpAction?.Enable();
@@ -32,6 +40,9 @@ public class PlayerInputs : MonoBehaviour
         switchTargetRightAction?.Enable();
         dodgeAction?.Enable();
         hackAction?.Enable();
+        hackInputAction?.Enable();
+        attackAction?.Enable();
+        HackConfirmAction?.Enable();
     }
 
     void Update()
@@ -43,7 +54,10 @@ public class PlayerInputs : MonoBehaviour
         ReadSwitchTargetInputLeft();
         ReadSwitchTargetInputRight();
         ReadDodgeInput();
+        ReadHackToggle();
         ReadHackInput();
+        ReadAttackInput();
+        ReadHackConfirmAction();
     }
 
     void ReadMovementInput() => MoveInput = moveAction.ReadValue<Vector2>();
@@ -57,7 +71,30 @@ public class PlayerInputs : MonoBehaviour
     void ReadSwitchTargetInputLeft() => SwitchTargetInputLeft = switchTargetLeftAction.WasPerformedThisFrame();
     void ReadSwitchTargetInputRight() => SwitchTargetInputRight = switchTargetRightAction.WasPressedThisFrame();
     void ReadDodgeInput() => DodgePressed = dodgeAction.WasPressedThisFrame();
+    void ReadAttackInput() => attackInput = attackAction.WasPressedThisFrame();
 
-    void ReadHackInput() => HackPressed = hackAction.WasPressedThisFrame();
+    void ReadHackToggle()
+    {
+        HackPressed = hackAction.ReadValue<float>() >= 0.8;
+        HackReleased = hackAction.ReadValue<float>() < 0.8;
+        //HackPressed = hackAction.WasPressedThisFrame();
+        //HackReleased = hackAction.WasReleasedThisFrame();
+        //HackInProgress = hackAction.IsInProgress();
+
+    }
+
+    void ReadHackInput()
+    {
+        HackInput = Vector2.zero;
+        if(hackInputAction.WasPressedThisFrame())
+        {
+            HackInput = hackInputAction.ReadValue<Vector2>();
+
+        }
+
+    }
+
+    public void ReadHackConfirmAction() => HackConfirm = HackConfirmAction.WasPressedThisFrame();
+
 
 }

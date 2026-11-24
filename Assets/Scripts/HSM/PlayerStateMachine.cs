@@ -48,7 +48,7 @@ public class PlayerStateMachine : MonoBehaviour
         currentState = nextState;
 
         currentState.Enter();
-        Debug.Log($"Current State : {currentState}");
+        //Debug.Log($"Current State : {currentState}");
     }
 }
 
