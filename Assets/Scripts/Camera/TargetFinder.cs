@@ -26,12 +26,16 @@ public class TargetFinder : MonoBehaviour
     [SerializeField] eSwitchTargetDirection switchTargetDirection;
     [SerializeField]GameObject lockOnIndicator;
     [SerializeField] RectTransform canvasRect;
+    public bool canSwitchTargets = true;
 
     void Update()
     {
         HandleLockOnStatus();
         HandleCurrentTarget();
-        HandleSwitchTargetInput();
+        if(canSwitchTargets) 
+        {
+            HandleSwitchTargetInput();
+        }
         HandleLockOnIndicator();
     }
 
@@ -96,7 +100,7 @@ public class TargetFinder : MonoBehaviour
             currentObstructionTime = 0f;
             return;
         }
-
+        //obstruction
         RaycastHit hit;
         var directionToTarget = currentTarget.position - cameraTransfrom.position;
         
@@ -104,6 +108,8 @@ public class TargetFinder : MonoBehaviour
         
         if (obstructionCheck && !hit.collider.tag.Equals("Enemy") && !hit.collider.tag.Equals("Player"))
         {
+            //if a child of the target has a collider then it ignores it
+            if(hit.collider.gameObject.GetComponentInChildren<Collider>()) return;
             currentObstructionTime += Time.deltaTime;
            
             if(currentObstructionTime > maxObstructionTime)

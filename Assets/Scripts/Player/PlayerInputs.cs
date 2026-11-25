@@ -75,10 +75,10 @@ public class PlayerInputs : MonoBehaviour
 
     void ReadHackToggle()
     {
-        HackPressed = hackAction.ReadValue<float>() >= 0.8;
-        HackReleased = hackAction.ReadValue<float>() < 0.8;
-        //HackPressed = hackAction.WasPressedThisFrame();
-        //HackReleased = hackAction.WasReleasedThisFrame();
+        //HackPressed = hackAction.ReadValue<float>() >= 0.5;
+        //HackReleased = hackAction.ReadValue<float>() < 0.5;
+        HackPressed = hackAction.WasPressedThisFrame();
+        HackReleased = hackAction.WasReleasedThisFrame() || hackAction.ReadValue<float>() < 0.5;
         //HackInProgress = hackAction.IsInProgress();
 
     }

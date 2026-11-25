@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,11 +24,14 @@ public class PlayerHack : MonoBehaviour
 
     [SerializeField] Sprite[] arrowSprites = new Sprite[4];
     [SerializeField] GameObject arrowIconPrefab;
-    [SerializeField] Transform sequenceContainer;
+    public Transform sequenceContainer;
+    public Transform comboListContainer;
     public bool isShowingResult;
+    [SerializeField] GameObject comboRowPrefab;
+    
+
     void Update()
     {
-        
         
     }   
 
@@ -45,7 +49,7 @@ public class PlayerHack : MonoBehaviour
             }
          
             HackController.AddDirection(direction);
-            AddArrowToUI(direction);
+            AddArrowToContainerUI(direction, sequenceContainer);
             //UpdateSequenceUI();
             Debug.Log($"Valid partial: {HackController.IsValidPartialSequence()}");
         }
@@ -59,7 +63,8 @@ public class PlayerHack : MonoBehaviour
 
                 HackController.StopHackingTimer();
                 StartCoroutine(ChangeArrowUIColour(Color.green, comboValidSeconds));
-
+                HackController.inputTimer = HackController.inputTimeLimit;
+                HackController.timerBar.value = HackController.inputTimeLimit;
 
             }
             else if (HackController.SequenceLength > 0 && HackController.IsValidPartialSequence())
@@ -71,6 +76,7 @@ public class PlayerHack : MonoBehaviour
             {
                 Debug.Log("Invalid combination");
                 StartCoroutine(ChangeArrowUIColour(Color.red, comboInvalidSeconds));
+                
             }
             
         }
@@ -94,18 +100,23 @@ public class PlayerHack : MonoBehaviour
         };
     }
 
-    public void AddArrowToUI(string direction )
+    public void AddArrowToContainerUI(string direction, Transform container )
     {
         int index = GetArrowIndex(direction);
 
         if(index == -1) throw new Exception("Invalid Directional input");
         
-        var currentArrow = Instantiate(arrowIconPrefab,sequenceContainer);
+        var currentArrow = Instantiate(arrowIconPrefab,container);
         
         currentArrow.GetComponent<Image>().sprite = arrowSprites[index]; 
 
-
+        if(container.Equals(comboListContainer))
+        {
+            currentArrow.GetComponent<Image>().color = Color.skyBlue;
+        }
     }
+
+    
 
     public IEnumerator ChangeArrowUIColour(Color validateColor, float time)
     {
@@ -121,21 +132,23 @@ public class PlayerHack : MonoBehaviour
        
         if (validateColor != Color.yellow)
         {
-            ClearSequenceUI();
+            ClearSequenceUI(sequenceContainer);
             HackController.ClearSequence();
             
         }
+    
             
-        
     }
 
-    public void ClearSequenceUI()
+    public void ClearSequenceUI(Transform container)
     {
-        foreach (Transform arrow in sequenceContainer)
+        foreach (Transform arrow in container)
         {
             Destroy(arrow.gameObject);
         }
     }
+
+  
     string HackInputHandler()
     {
         Vector2 direction = Inputs.HackInput;
@@ -150,6 +163,29 @@ public class PlayerHack : MonoBehaviour
 
         return direction.y > 0 ? "^" : "v";
 
+    }
+
+    public void ShowComboListUI()
+    {
+        //ClearSequenceUI(comboListContainer);
+
+        var currentTarget = HackController.currentTarget;
+        if(currentTarget == null) return;
+        //var grid = comboListContainer.GetComponent<GridLayoutGroup>();
+        foreach (var combo in currentTarget.Data.combinations)
+        {
+            //grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            //grid.constraintCount = combo.sequence.Length;
+            var rowObject = Instantiate(comboRowPrefab,comboListContainer);
+           
+            var row = rowObject.GetComponent<HackComboRow>();
+            row.AbilityName.text = combo.abilityName;
+
+            foreach (var sequence in combo.sequence)
+            {
+                AddArrowToContainerUI(sequence.ToString(), row.ArrowContainer);
+            }
+        }
     }
     
 }

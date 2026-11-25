@@ -10,7 +10,7 @@ public class PlayerHackController : MonoBehaviour
     //[SerializeField] Vector2 hackDirection;
     //public string inputString = "";
     public bool hasMatch;
-    [SerializeField] public Dictionary<string, string> comboList = new Dictionary<string, string>();
+    ///[SerializeField] public Dictionary<string, string> comboList = new Dictionary<string, string>();
 
     public float inputTimeLimit = 5f;
     public float inputTimer;
@@ -21,15 +21,19 @@ public class PlayerHackController : MonoBehaviour
     /// 
     [SerializeField] List<string> playerSequence = new List<string>();
     public int SequenceLength => playerSequence.Count;
-    List<string> testCombo = new List<string>{"^",">","v","<"};
+    //List<string> testCombo = new List<string>{"^",">","v","<"};
     //public bool hasTimedOut;
-    public string CurrentSequence => string.Join(" ", playerSequence);
+    //public string CurrentSequence => string.Join(" ", playerSequence);
     public bool isTimerRunning;
+
+    public HackableObject currentTarget;   
+    
     public void Awake()
     {
-        comboList.Add("^>v","Disable Turret");
-        comboList.Add("<^v","Open Door");
-        comboList.Add("^^>v","Overload");
+        //comboList.Add("^>v","Disable Turret");
+        //comboList.Add("<^v","Open Door");
+        //comboList.Add("^^>v","Overload");
+        SetCurrentTarget();
         SetUpHackingTimer();
     }
     public void AddDirection(string direction)
@@ -63,9 +67,9 @@ public class PlayerHackController : MonoBehaviour
     {
         string currentSequence = string.Join("",playerSequence);
 
-        foreach (var combo in comboList)
+        foreach (var combo in currentTarget.Data.combinations)
         {
-            if (combo.Key.StartsWith(currentSequence))
+            if (combo.sequence.StartsWith(currentSequence))
             {
                 return true;
             }
@@ -77,12 +81,12 @@ public class PlayerHackController : MonoBehaviour
     {
         string currentSequence = string.Join("", playerSequence);
 
-        foreach (var combo in comboList)
+        foreach (var combo in currentTarget.Data.combinations)
         {
-            if(combo.Key == currentSequence)
+            if(combo.sequence.Equals(currentSequence))
             {
                 ClearSequence();
-                return  combo.Value;
+                return  combo.abilityName;
             }
         }
 
@@ -135,6 +139,8 @@ public class PlayerHackController : MonoBehaviour
             player.Hack.StartCoroutine(player.Hack.ChangeArrowUIColour(Color.darkRed, player.Hack.comboInvalidSeconds));
             ClearSequence();
             StopHackingTimer();
+            inputTimer = inputTimeLimit;
+            timerBar.value = inputTimeLimit;
         }
         
     }
@@ -148,6 +154,25 @@ public class PlayerHackController : MonoBehaviour
         inputTimer = inputTimeLimit;
         timerBar.value = inputTimeLimit;
         isTimerRunning = true;
+    }
+    public void SetCurrentTarget()
+    {
+        Transform target = player.TargetFndr.currentTarget;
+
+        if (target == null)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        currentTarget = target?.GetComponentInParent<HackableObject>();
+        var dic = currentTarget.Data;
+        Debug.Log(currentTarget);
+    }
+
+    public void SetTarget(HackableObject target)
+    {
+        currentTarget = target;
     }
 
 }

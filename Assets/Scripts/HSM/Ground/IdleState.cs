@@ -50,8 +50,13 @@ public class IdleState : GroundedState
         }
         if(player.Inputs.HackPressed && player.TargetFndr.isLockedOn)
         {
-            stateMachine.ChangeState(stateMachine.hackState);
-            return;
+            Transform target = player.TargetFndr.currentTarget;
+
+            if(target != null && target.GetComponent<HackableObject>() != null )
+            {
+                stateMachine.ChangeState(stateMachine.hackState);
+                return;
+            }
         }
     }
 
