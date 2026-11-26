@@ -23,7 +23,7 @@ public class PlayerHackController : MonoBehaviour
     public int SequenceLength => playerSequence.Count;
     //List<string> testCombo = new List<string>{"^",">","v","<"};
     //public bool hasTimedOut;
-    //public string CurrentSequence => string.Join(" ", playerSequence);
+    public string CurrentSequence => string.Join("", playerSequence);
     public bool isTimerRunning;
 
     public HackableObject currentTarget;   
@@ -136,11 +136,12 @@ public class PlayerHackController : MonoBehaviour
 
             //hasTimedOut = true;
 
-            player.Hack.StartCoroutine(player.Hack.ChangeArrowUIColour(Color.darkRed, player.Hack.comboInvalidSeconds));
+            player.Hack.StartCoroutine(player.Hack.ChangeSequenceArrowUIColour(Color.darkRed, player.Hack.comboInvalidSeconds));
             ClearSequence();
             StopHackingTimer();
             inputTimer = inputTimeLimit;
             timerBar.value = inputTimeLimit;
+            player.Hack.ResetComboList();
         }
         
     }
