@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 7378834}
   - component: {fileID: 7378833}
   - component: {fileID: 7378837}
+  - component: {fileID: 7378838}
   m_Layer: 7
   m_Name: Door
   m_TagString: Enemy
@@ -245,6 +246,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HackableObject
   hackData: {fileID: 11400000, guid: 9aa0ef1157175c249bf3547fc20302e2, type: 2}
+--- !u!114 &7378838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7378832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2163a54f4b058b4eaba06c4e8c348b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  door: {fileID: 7378836}
+  openDistance: 2
+  openSpeed: 2
 --- !u!1 &151799743
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,7 +1124,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -229, y: 22.6}
+  m_AnchoredPosition: {x: -20, y: 48.1}
   m_SizeDelta: {x: 145, y: 48.3}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &712190652
@@ -1430,7 +1446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHackController
   player: {fileID: 836613787}
   hasMatch: 0
-  inputTimeLimit: 1.5
+  inputTimeLimit: 2.5
   inputTimer: 0
   timerBar: {fileID: 1507761356}
   playerSequence: []
@@ -1797,14 +1813,14 @@ RectTransform:
   m_GameObject: {fileID: 1177911160}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.17, y: 0.17, z: 0.17}
+  m_LocalScale: {x: 0.23, y: 0.23, z: 0.23}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1717449686}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -56, y: 35}
+  m_AnchoredPosition: {x: -75, y: 35}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1177911162
@@ -1839,7 +1855,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 60
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -2222,9 +2238,9 @@ RectTransform:
   - {fileID: 517263419}
   m_Father: {fileID: 1902365918}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -203.6, y: 64.241}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 57.7, y: 39.6}
   m_SizeDelta: {x: 212.3, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1507761356
@@ -2292,7 +2308,7 @@ GameObject:
   - component: {fileID: 1581522405}
   - component: {fileID: 1581522409}
   m_Layer: 5
-  m_Name: Ui
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2413,6 +2429,8 @@ MonoBehaviour:
   comboListContainer: {fileID: 1177911161}
   isShowingResult: 0
   comboRowPrefab: {fileID: 2402273140827835783, guid: 66fd6b53f2361644fb4f4f4b11a9806a, type: 3}
+  sequenceBG: {fileID: 712190652}
+  combosBG: {fileID: 1717449687}
 --- !u!1 &1630787030
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,8 +2653,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 117.5, y: 100}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: 145, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1717449687
 MonoBehaviour:
@@ -2651,7 +2669,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5330188, g: 0.6087426, b: 1, a: 0.392}
+  m_Color: {r: 0.3492346, g: 0.4019254, b: 0.6792453, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2709,7 +2727,7 @@ RectTransform:
   m_Father: {fileID: 242207040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2784,7 +2802,7 @@ RectTransform:
   m_Father: {fileID: 517263419}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2914,6 +2932,7 @@ GameObject:
   - component: {fileID: 2087923434}
   - component: {fileID: 2087923433}
   - component: {fileID: 2087923437}
+  - component: {fileID: 2087923438}
   m_Layer: 7
   m_Name: Turret
   m_TagString: Enemy
@@ -3030,6 +3049,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HackableObject
   hackData: {fileID: 11400000, guid: d0095e298e2571643a8e899dd3138a08, type: 2}
+--- !u!114 &2087923438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087923432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45b8de1e08c41469ac88b1058dbb6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  turret: {fileID: 2087923432}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -34,23 +34,23 @@ public class HackState : GroundedState
             //player.HackController.MatchPair();
             /*if(!player.Hack.isHacking)
             {*/
-            if (!player.Hack.isShowingResult)
-            {
-                stateMachine.ChangeState(stateMachine.idleState);
-                return;
-            }
-            //}
-            }
-            if(player.Inputs.HackReleased && player.isMoving  || !player.TargetFndr.isLockedOn && player.isMoving )
-            {
-            //player.HackController.MatchPair();
-            //if(!player.Hack.isHacking)
-            //{
-            if (!player.Hack.isShowingResult)
-            {
-                stateMachine.ChangeState(stateMachine.moveState);
-                return;
-            }   
+                if (!player.Hack.isShowingResult || !player.HackController.isTimerRunning)
+                {
+                    stateMachine.ChangeState(stateMachine.idleState);
+                    return;
+                }
+                //}
+                }
+                if(player.Inputs.HackReleased && player.isMoving  || !player.TargetFndr.isLockedOn && player.isMoving )
+                {
+                //player.HackController.MatchPair();
+                //if(!player.Hack.isHacking)
+                //{
+                if (!player.Hack.isShowingResult || !player.HackController.isTimerRunning)
+                {
+                    stateMachine.ChangeState(stateMachine.moveState);
+                    return;
+                }   
             //}
             }
         //}

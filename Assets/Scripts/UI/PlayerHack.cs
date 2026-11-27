@@ -30,6 +30,8 @@ public class PlayerHack : MonoBehaviour
     public Transform comboListContainer;
     public bool isShowingResult;
     [SerializeField] GameObject comboRowPrefab;
+    public Image sequenceBG;
+    public Image combosBG;
 
     void Update()
     {
@@ -41,18 +43,16 @@ public class PlayerHack : MonoBehaviour
     {
         if(isShowingResult) return;
         string direction = HackInputHandler();
+        if (!HackController.isTimerRunning)
+        {
+            HackController.BeginSequence();
+        }
         if(direction != null)
         {
-            if (!HackController.isTimerRunning)
-            {
-                HackController.BeginSequence();
-            }
          
             HackController.AddDirection(direction);
             AddArrowToContainerUI(direction, sequenceContainer);
             UpdateComboListHightlight();
-            //UpdateSequenceUI();
-            Debug.Log($"Valid partial: {HackController.IsValidPartialSequence()}");
         }
         if (HackController.SequenceLength > 0 && (Inputs.HackConfirm || HackController.SequenceLength >= 8))
         {
@@ -60,39 +60,32 @@ public class PlayerHack : MonoBehaviour
             
             if (ability != null)
             {
-                Debug.Log($"Ability matched: {ability}");
-
+                HackController.currentTarget.ExecuteAbiliity(ability);
                 HackController.StopHackingTimer();
                 StartCoroutine(ChangeSequenceArrowUIColour(Color.green, comboValidSeconds));
                     //FindComboRow(ability);
                 StartCoroutine(ChangeComboListArrowUIColour(ability));
+                StartCoroutine(ChangeBackgroundColour(sequenceBG,Color.green, comboValidSeconds));
                 HackController.inputTimer = HackController.inputTimeLimit;
                 HackController.timerBar.value = HackController.inputTimeLimit;
                 ResetComboList();
             }
             else if (HackController.SequenceLength > 0 && HackController.IsValidPartialSequence())
             {
-                Debug.Log($"Incomplete sequence");
                 UpdateComboListHightlightPartial();
                 StartCoroutine(ChangeSequenceArrowUIColour(Color.yellow, comboPartialSeconds));
+                StartCoroutine(ChangeBackgroundColour(sequenceBG,Color.yellow, comboPartialSeconds));
             }  
             else
             {
-                Debug.Log("Invalid combination");
                 StartCoroutine(ChangeSequenceArrowUIColour(Color.red, comboInvalidSeconds));
+                StartCoroutine(ChangeBackgroundColour(sequenceBG,Color.red, comboInvalidSeconds));
                 ResetComboList();
             }                   
-            //ClearSequenceUI(comboListContainer);
-            
-            //ShowComboListUI();
+
         }
     }
-    /*
-    public void UpdateSequenceUI()
-    {
-        comboListUI.text = HackController.CurrentSequence;
-    }
-    */
+
 
     public int GetArrowIndex (string direction)
     {
@@ -136,40 +129,69 @@ public class PlayerHack : MonoBehaviour
         
         isShowingResult = false;
        
-        if (validateColor != Color.yellow)
+        if(validateColor != Color.yellow )
         {
             ClearSequenceUI(sequenceContainer);
             HackController.ClearSequence();
             
         }    
     }
+    public IEnumerator ChangeBackgroundColour(Image background, Color colour, float time)
+    {
+        var originalColour = background.color;
+        colour.a = .5f;
+        background.color = colour;
+        yield return new WaitForSeconds(time);
+
+       background.color = originalColour;
+
+       var partialSquenceColourWthAlpha = Color.yellow;
+       partialSquenceColourWthAlpha.a = .5f;
+
+        if (colour != partialSquenceColourWthAlpha)
+        {
+            //ResetComboList();
+        }
+    }
 
     public IEnumerator ChangeComboListArrowUIColour(string ability)
     {
         var originalColour = Color.white;
+        if (comboListContainer == null) yield break;
+
         foreach (Transform comboRowTransform in comboListContainer)
         {
-            var ComboRowAbilityName = comboRowTransform.GetComponent<HackComboRow>().AbilityName;
-            var comboListArrows = comboRowTransform.GetComponent<HackComboRow>().ArrowContainer;
-            Debug.Log($"name: {ComboRowAbilityName} | arrows list: {comboListArrows}");
-            if(ComboRowAbilityName.text.Equals(ability))
+            if (comboRowTransform == null) continue;
+
+            var comboRow = comboRowTransform.GetComponent<HackComboRow>();
+            if (comboRow == null || comboRow.AbilityName == null || comboRow.ArrowContainer == null) continue;
+
+            var comboListAbilityName = comboRow.AbilityName;
+            var comboListArrows = comboRow.ArrowContainer;
+            if (comboListAbilityName.text.Equals(ability))
             {
-                ComboRowAbilityName.color = Color.softBlue;
-                Debug.Log("doo be doo");
+                comboListAbilityName.color = Color.softBlue;
                 foreach (Transform arrowTransform in comboListArrows)
                 {
-                    Debug.Log($"{arrowTransform}");
                     //originalColour = arrowTransform.GetComponent<Image>().color;
-                    arrowTransform.GetComponent<Image>().color =  Color.softBlue;
-                    
+                    if (arrowTransform == null) continue;
+
+                    var arrowImage = arrowTransform.GetComponent<Image>();
+                    if (arrowImage != null) arrowImage.color = Color.softBlue;
                 }
 
                 yield return new WaitForSeconds(comboValidSeconds);
 
-                ComboRowAbilityName.color = originalColour;
+                if (comboRowTransform == null || comboListAbilityName == null || comboListArrows == null)
+                    yield break;
+
+                comboListAbilityName.color = originalColour;
                 foreach (Transform arrowTransform in comboListArrows)
                 {
-                    arrowTransform.GetComponent<Image>().color =  originalColour;
+                    if (arrowTransform == null) continue;
+
+                    var arrowImage = arrowTransform.GetComponent<Image>();
+                    if (arrowImage != null) arrowImage.color = originalColour;
                 }
 
                 yield break;
@@ -228,9 +250,14 @@ public void ResetComboList()
                 row.HighlightArrow(arrowIndex, Color.red);
                 candidateComboRows.RemoveAt(i);
             }
+            if(candidateComboRows.Count == 0)
+            {
+                StartCoroutine(ChangeSequenceArrowUIColour(Color.red, comboInvalidSeconds));
+                StartCoroutine(ChangeBackgroundColour(combosBG,Color.red, comboInvalidSeconds));
+               
+            }
         }
     }
-
 
      public void UpdateComboListHightlightPartial()
     {
@@ -290,16 +317,13 @@ public void ResetComboList()
 
     public void ShowComboListUI()
     {
-        //ClearSequenceUI(comboListContainer);
         candidateComboRows.Clear();
 
         var currentTarget = HackController.currentTarget;
         if(currentTarget == null) return;
-        //var grid = comboListContainer.GetComponent<GridLayoutGroup>();
         foreach (var combo in currentTarget.Data.combinations)
         {
-            //grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            //grid.constraintCount = combo.sequence.Length;
+
             var rowObject = Instantiate(comboRowPrefab,comboListContainer);
            
             var row = rowObject.GetComponent<HackComboRow>();
@@ -311,25 +335,6 @@ public void ResetComboList()
             {
                 AddArrowToContainerUI(sequence.ToString(), row.ArrowContainer);
             }
-        }
-    }
-
-    public void FindComboRow(string ability)
-    {
-        var test = HackController.currentTarget.Data.combinations;
-
-        foreach(var comboRow in test)
-        {
-
-            if (ability.Equals(comboRow.abilityName))
-            {
-                
-            }
-            else
-            {
-                throw new Exception("No matching ability found");
-            }
-            
         }
     }
     

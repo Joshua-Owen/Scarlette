@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: SecurityDoorData
   m_EditorClassIdentifier: Assembly-CSharp::HackData
   combinations:
-  - sequence: ^>v
-    abilityName: Open Door
   - sequence: <<v
     abilityName: Emergency Unlock
   - sequence: ^v^
     abilityName: test
+  - sequence: <<^
+    abilityName: Emergency Lock
+  - sequence: ^>>
+    abilityName: Open Door

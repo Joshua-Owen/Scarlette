@@ -6,23 +6,16 @@ using UnityEngine.UI;
 public class PlayerHackController : MonoBehaviour
 {
     [SerializeField] PlayerController player;
-    //[SerializeField] PlayerInputs inputs;
-    //[SerializeField] Vector2 hackDirection;
-    //public string inputString = "";
+
     public bool hasMatch;
-    ///[SerializeField] public Dictionary<string, string> comboList = new Dictionary<string, string>();
 
     public float inputTimeLimit = 5f;
     public float inputTimer;
 
     public Slider timerBar;
-
-    ////
-    /// 
     [SerializeField] List<string> playerSequence = new List<string>();
     public int SequenceLength => playerSequence.Count;
-    //List<string> testCombo = new List<string>{"^",">","v","<"};
-    //public bool hasTimedOut;
+
     public string CurrentSequence => string.Join("", playerSequence);
     public bool isTimerRunning;
 
@@ -30,9 +23,6 @@ public class PlayerHackController : MonoBehaviour
     
     public void Awake()
     {
-        //comboList.Add("^>v","Disable Turret");
-        //comboList.Add("<^v","Open Door");
-        //comboList.Add("^^>v","Overload");
         SetCurrentTarget();
         SetUpHackingTimer();
     }
@@ -42,7 +32,7 @@ public class PlayerHackController : MonoBehaviour
 
         playerSequence.Add(direction);
                     
-        Debug.Log(string.Join(" ",playerSequence));
+        //Debug.Log(string.Join(" ",playerSequence));
 
     }
 
@@ -50,18 +40,7 @@ public class PlayerHackController : MonoBehaviour
     public void ClearSequence()
     {
         playerSequence.Clear();
-        //player.Hack.ClearSequenceUI();
     }
-
-    /*
-    public void SequenceEqual()
-    {
-        if(playerSequence.SequenceEqual(testCombo))
-        {
-            Debug.Log("Sequence Match");
-        }
-    }
-    */
 
     public bool IsValidPartialSequence()
     {
@@ -93,28 +72,6 @@ public class PlayerHackController : MonoBehaviour
         return null;
     }
     
-    /*public string ValidateSequence()
-    {
-        string currentSequence = string.Join("", playerSequence);
-
-        foreach (var combo in comboList)
-        {
-            if(combo.Key == currentSequence)
-            {
-                ClearSequence();
-                return combo.Value;
-            }            
-
-            if (combo.Key.StartsWith(currentSequence))
-            {
-                return null;
-            }
-        }
-
-        ClearSequence();
-        return null;
-    }
-`   */
     public void SetUpHackingTimer()
     {
         inputTimer = inputTimeLimit;
@@ -134,9 +91,9 @@ public class PlayerHackController : MonoBehaviour
             inputTimer = 0;
             timerBar.value = 0;
 
-            //hasTimedOut = true;
-
             player.Hack.StartCoroutine(player.Hack.ChangeSequenceArrowUIColour(Color.darkRed, player.Hack.comboInvalidSeconds));
+            player.Hack.StartCoroutine(player.Hack.ChangeBackgroundColour(player.Hack.sequenceBG, Color.darkRed, player.Hack.comboInvalidSeconds));
+            player.Hack.StartCoroutine(player.Hack.ChangeBackgroundColour(player.Hack.combosBG, Color.darkRed, player.Hack.comboInvalidSeconds));
             ClearSequence();
             StopHackingTimer();
             inputTimer = inputTimeLimit;
@@ -171,9 +128,5 @@ public class PlayerHackController : MonoBehaviour
         Debug.Log(currentTarget);
     }
 
-    public void SetTarget(HackableObject target)
-    {
-        currentTarget = target;
-    }
 
 }
